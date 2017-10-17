@@ -57,12 +57,21 @@ define([
       mountain3DView.render();
     }
 
-    function onLocationLoaded() {
-      mountain3DView.addRouteData(jsonRoute);
-      mountain3DView.addPlayer1(jsonRoute);
-      mountain3DView.addPlayer2(jsonRoute);
+    function setupMapPoint(arrMapPoint) {
+      mountain3DView = new Mountain3DView({ el: '#map-view', arrMapPoint: arrMapPoint });
+      mountain3DView.show();
+      mountain3DView.render();
     }
 
+    function onLocationLoaded() {
+      if (jsonRoute) {
+        mountain3DView.addRouteData(jsonRoute);
+        mountain3DView.addPlayer1(jsonRoute);
+        mountain3DView.addPlayer2(jsonRoute);
+      }
+    }
+
+//    setupMapPoint([6.868858, 45.836865]);
     getJourney('5875843c37d99829635908'); // Mitterhorn 2056m Run
 //    getJourney('59a0091680d4a677217766'); // Monte Pelmo 2416m Run
 //    getJourney('59a180c711b0c944854494'); // Großglockner 2173m Run
@@ -70,6 +79,10 @@ define([
 //    getJourney('59ac026a9c3cb236198760'); // Mitterhorn 514m Run
 //    getJourney('59ac5e1a9e28d359148596'); // Mitterhorn 1264m Ride
 //    getJourney('59d4ad31a276a319404809'); // Monte Pelmo 28336m Run
+
+    $('.addsnow').click(function(evt){
+      mountain3DView.addSnow();
+    });
 
     $('.removeplayers').click(function(evt){
       mountain3DView.removePlayer1();

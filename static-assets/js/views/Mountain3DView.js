@@ -47,45 +47,53 @@ define([
     },
 
     addPlayer1: function(jsonRoute){
-      var jsonLabel = {
-        "id": 0,
+      var jsonPlayer = {
         "name": "player1",
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [
-            12.701107,
-            47.572986,
-            1000
-          ]
-        },
-        "properties": {
-          "image": "https://scontent.xx.fbcdn.net/v/t1.0-1/p320x320/17022059_1884048141837162_2312116276217952972_n.jpg?oh=f54f730e4c5d034c5e14b5c957946b46&oe=5A5C14B5"
-        }
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "id": 0,
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                12.701107,
+                47.572986,
+                1000
+              ]
+            },
+            "properties": {
+              "image": "https://scontent.xx.fbcdn.net/v/t1.0-1/p320x320/17022059_1884048141837162_2312116276217952972_n.jpg?oh=f54f730e4c5d034c5e14b5c957946b46&oe=5A5C14B5"
+            }
+          }
+        ]
       }
-      this.jsonMapRoute.features.push(jsonLabel);
-      Procedural.addOverlay( this.jsonMapRoute );
+      Procedural.addOverlay( jsonPlayer );
     },
 
     addPlayer2: function(jsonRoute){
-      var jsonLabel = {
-        "id": 1,
+      var jsonPlayer = {
         "name": "player2",
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [
-            12.69037,
-            47.57404,
-            1000
-          ]
-        },
-        "properties": {
-          "image": "https://dgalywyr863hv.cloudfront.net/pictures/athletes/2546781/7075915/1/large.jpg"
-        }
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "id": 1,
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                12.69037,
+                47.57404,
+                1000
+              ]
+            },
+            "properties": {
+              "image": "https://dgalywyr863hv.cloudfront.net/pictures/athletes/2546781/7075915/1/large.jpg"
+            }
+          }
+        ]
       }
-      this.jsonMapRoute.features.push(jsonLabel);
-      Procedural.addOverlay( this.jsonMapRoute );
+      Procedural.addOverlay( jsonPlayer );
     },
 
     removePlayer1: function(){
@@ -94,6 +102,18 @@ define([
 
     removePlayer2: function(){
       Procedural.removeOverlay( 'player2' );
+    },
+
+    addSnow: function(){
+      var geo = {
+        title: 'winter',
+        parameters: {
+          snowTop: 100,
+          snowBottom: 100,
+          snowInclination: 1
+        }
+      };
+      Procedural.setGeography( geo )
     },
 
     playRoute: function(){
