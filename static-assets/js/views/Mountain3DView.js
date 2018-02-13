@@ -1,8 +1,9 @@
 define([
   'underscore', 
   'backbone',
+  'turf',
   'piste'
-], function(_, Backbone, piste){
+], function(_, Backbone, turf, piste){
 
   var Mountain3DView = Backbone.View.extend({
     initialize: function(options){
@@ -23,11 +24,12 @@ define([
       $(this.el).show();
     },
 
-    addRouteData: function(jsonRoute){
+    addRouteData: function(arrRouteCoords){
       var jsonMapRoute = {
         "id": 99,
         "type": "Feature",
         "properties": {
+          "selectable": false,
           "name": "Hello World",
           "color": "#f75f36",
           "thickness": 3
@@ -37,7 +39,11 @@ define([
           "coordinates": []
         }
       };
-      jsonMapRoute.geometry.coordinates = jsonRoute.geometry.coordinates;
+
+      $.each(arrRouteCoords, function(index) {
+        jsonMapRoute.geometry.coordinates.push(this.coords);
+      });
+
       this.jsonMapRoute.features.push(jsonMapRoute);
       Procedural.addOverlay( this.jsonMapRoute );
     },
@@ -46,62 +52,75 @@ define([
       Procedural.focusOnFeature(nPlayer);
     },
 
-    addPlayer1: function(jsonRoute){
+    addPlayer: function(nID, fProgressMetres, strAvatar){
+      var fKilometres = (fProgressMetres / 1000);
+      var along = turf.along(this.jsonMapRoute.features[0], fKilometres, 'kilometers');
+      var fLat = along.geometry.coordinates[1];
+      var fLng = along.geometry.coordinates[0];
+
       var jsonPlayer = {
-        "name": "player1",
-        "type": "FeatureCollection",
-        "features": [
+        "name": 'player' + String(nID),
+        "features": [ 
           {
-            "id": 0,
-            "type": "Feature",
             "geometry": {
               "type": "Point",
-              "coordinates": [
-                12.701107,
-                47.572986,
-                1000
-              ]
+              "coordinates": [ fLng, fLat ]
             },
+            "type": "Feature",
+            "id": nID,
             "properties": {
-              "image": "https://scontent.xx.fbcdn.net/v/t1.0-1/p320x320/17022059_1884048141837162_2312116276217952972_n.jpg?oh=f54f730e4c5d034c5e14b5c957946b46&oe=5A5C14B5"
+              "borderRadius": 32,
+              "image": strAvatar,
+              "height": 60,
+              "width": 60,
+              "borderWidth": 2,
+              "background": "#ccc",
+              "anchor": {
+                "y": 2.1,
+                "x": 0
+              }
+            }
+          },
+          {
+            "geometry": {
+              "type": "Point",
+              "coordinates": [ fLng, fLat ]
+            },
+            "type": "Feature",
+            "id": nID,
+            "properties": {
+              "fontSize": 20,
+              "anchor": {
+                "y": 3,
+                "x": 0
+              },
+              "icon": "caret-down"
+            }
+          },
+          {
+            "geometry": {
+              "type": "Point",
+              "coordinates": [ fLng, fLat ]
+            },
+            "type": "Feature",
+            "id": nID,
+            "properties": {
+              "name": String(nID+1),
+              "borderRadius": 23,
+              "padding": 5,
+              "fontSize": 13,
+              "background": "#44b6f7",
+              "anchor": "bottom"
             }
           }
         ]
       }
+
       Procedural.addOverlay( jsonPlayer );
     },
 
-    addPlayer2: function(jsonRoute){
-      var jsonPlayer = {
-        "name": "player2",
-        "type": "FeatureCollection",
-        "features": [
-          {
-            "id": 1,
-            "type": "Feature",
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-                12.69037,
-                47.57404,
-                1000
-              ]
-            },
-            "properties": {
-              "image": "https://dgalywyr863hv.cloudfront.net/pictures/athletes/2546781/7075915/1/large.jpg"
-            }
-          }
-        ]
-      }
-      Procedural.addOverlay( jsonPlayer );
-    },
-
-    removePlayer1: function(){
-      Procedural.removeOverlay( 'player1' );
-    },
-
-    removePlayer2: function(){
-      Procedural.removeOverlay( 'player2' );
+    removePlayer: function(nID){
+      Procedural.removeOverlay( 'player' + String(nID) );
     },
 
     addSnow: function(){
@@ -113,11 +132,26 @@ define([
           snowInclination: 1
         }
       };
-      Procedural.setGeography( geo )
+      Procedural.setGeography( geo );
+    },
+
+    spin: function(){
+      Procedural.orbitTarget();
     },
 
     playRoute: function(){
-      Procedural.animateAlongFeature( 99, { distance: 500, speed: 500 } );
+      Procedural.animateAlongFeature( 99, { distance: 14000, speed: 100 } );
+    },
+
+    locationFocus: function(fLat, fLng){
+      Procedural.focusOnLocation({
+        latitude: fLat,
+        longitude: fLng
+      });
+    },
+
+    attractor: function(){
+      Procedural.orbitTarget();
     },
 
     render: function(){
@@ -134,7 +168,8 @@ define([
         };
 
         Procedural.onFeaturesLoaded = function () {
-         console.log( 'Features loaded' );
+          // fire event
+          app.dispatcher.trigger("Mountain3DView:onFeaturesLoaded");
         };
       };
 
