@@ -52,11 +52,13 @@ define([
       Procedural.focusOnFeature(nPlayer);
     },
 
-    addPlayer: function(nID, fProgressMetres, strAvatar){
+    addPlayer: function(nID, fProgressMetres, strAvatar, nSize){
       var fKilometres = (fProgressMetres / 1000);
       var along = turf.along(this.jsonMapRoute.features[0], fKilometres, 'kilometers');
       var fLat = along.geometry.coordinates[1];
       var fLng = along.geometry.coordinates[0];
+
+      strAvatar = 'http://mountainrush.trailburning.com/tb-game-api/imageproxy.php?url=' + strAvatar;
 
       var jsonPlayer = {
         "name": 'player' + String(nID),
@@ -71,8 +73,8 @@ define([
             "properties": {
               "borderRadius": 32,
               "image": strAvatar,
-              "height": 60,
-              "width": 60,
+              "height": nSize,
+              "width": nSize,
               "borderWidth": 2,
               "background": "#ccc",
               "anchor": {
@@ -91,7 +93,7 @@ define([
             "properties": {
               "fontSize": 20,
               "anchor": {
-                "y": 3,
+                "y": 3.2,
                 "x": 0
               },
               "icon": "caret-down"
@@ -121,6 +123,30 @@ define([
 
     removePlayer: function(nID){
       Procedural.removeOverlay( 'player' + String(nID) );
+    },
+
+    addFlag: function(strImage) {
+      strImage = 'http://mountainrush.trailburning.com/tb-game-api/imageproxy.php?url=' + strImage;
+
+      var fLat = this.jsonMapRoute.features[0].geometry.coordinates[this.jsonMapRoute.features[0].geometry.coordinates.length-1][1];
+      var fLng = this.jsonMapRoute.features[0].geometry.coordinates[this.jsonMapRoute.features[0].geometry.coordinates.length-1][0];
+
+      var jsonFlag = {
+        "features": [ {
+            "geometry": {
+              "type": "Point",
+              "coordinates": [ fLng, fLat ]
+            },
+            "type": "Feature",
+            "id": 100,
+            "properties": {
+              "image": strImage
+            }
+          }
+        ]
+      }
+
+      Procedural.addOverlay( jsonFlag );
     },
 
     addSnow: function(){

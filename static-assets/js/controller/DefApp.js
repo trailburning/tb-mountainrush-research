@@ -53,8 +53,11 @@ define([
     function onLocationLoaded() {
       if (arrRouteCoords) {
         mountain3DView.addRouteData(arrRouteCoords);
-        mountain3DView.addPlayer(0, 3000, "http://forum.jedox.com/wcf/images/avatars/d1/14-d1d779416bac6c1973e66fa698d040efc412ea3a.png");
-        mountain3DView.addPlayer(1, 15000, "https://dgalywyr863hv.cloudfront.net/pictures/athletes/270394/7302003/9/large.jpg");
+
+        mountain3DView.addFlag("https://image.flaticon.com/icons/png/128/34/34338.png");
+
+        mountain3DView.addPlayer(0, 3000, "http://forum.jedox.com/wcf/images/avatars/d1/14-d1d779416bac6c1973e66fa698d040efc412ea3a.png", 60);
+        mountain3DView.addPlayer(1, 15000, "https://dgalywyr863hv.cloudfront.net/pictures/athletes/270394/7302003/9/large.jpg", 60);
       }
     }
 
