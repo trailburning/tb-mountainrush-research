@@ -54,32 +54,28 @@ define([
       if (arrRouteCoords) {
         mountain3DView.addRouteData(arrRouteCoords);
 
-        mountain3DView.addFlag("https://image.flaticon.com/icons/png/128/34/34338.png");
+        mountain3DView.addFlag("http://mountainrush.trailburning.com/demo/tb-mountainrush-research/static-assets/images/mr_logo.png");
 
         mountain3DView.addPlayer(0, 3000, "http://forum.jedox.com/wcf/images/avatars/d1/14-d1d779416bac6c1973e66fa698d040efc412ea3a.png", 60);
-        mountain3DView.addPlayer(1, 15000, "https://dgalywyr863hv.cloudfront.net/pictures/athletes/270394/7302003/9/large.jpg", 60);
+        mountain3DView.addPlayer(1, 8000, "https://dgalywyr863hv.cloudfront.net/pictures/athletes/270394/7302003/9/large.jpg", 60);
       }
     }
 
     function onFeaturesLoaded() {
       var arrCoord = arrRouteCoords[arrRouteCoords.length - 1];
-
+/*
       mountain3DView.locationFocus(arrCoord.coords[1], arrCoord.coords[0]);
       setTimeout(function(){ 
         mountain3DView.attractor();
       }, 4000);
+*/      
     }
 
 //    setupMapPoint([6.894093, 45.877274]); // Mont Blanc
 
-    getJourney('5a44843c9d4a5373279579'); // Mont Blanc
-//    getJourney('5875843c37d99829635908'); // Mitterhorn 2056m Run
-//    getJourney('59a0091680d4a677217766'); // Monte Pelmo 2416m Run
-//    getJourney('59a180c711b0c944854494'); // Großglockner 2173m Run
-//    getJourney('59a81f06d979a652643814'); // Großglockner 1506m Ride
-//    getJourney('5a17e966d9fc7578335574'); // Großglockner 2651m Run
-//    getJourney('59ac026a9c3cb236198760'); // Mitterhorn 514m Run
-//    getJourney('59ac5e1a9e28d359148596'); // Mitterhorn 1264m Ride
+//    getJourney('5a44843c9d4a5373279579'); // Mont Blanc
+    getJourney('5875843c37d99829635908'); // Mitterhorn 2056m Run
+//    getJourney('59a180c711b0c944854494'); // Großglockner 2651m Run
 //    getJourney('59d4ad31a276a319404809'); // Monte Pelmo 2947m Run
 
     $('.fly').click(function(evt){

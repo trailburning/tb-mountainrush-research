@@ -140,7 +140,14 @@ define([
             "type": "Feature",
             "id": 100,
             "properties": {
-              "image": strImage
+              "selectable": false,
+              "image": strImage,
+              "height": 80,
+              "width": 80,
+              "anchor": {
+                "y": 1.2,
+                "x": 0
+              }
             }
           }
         ]
@@ -166,7 +173,7 @@ define([
     },
 
     playRoute: function(){
-      Procedural.animateAlongFeature( 99, { distance: 14000, speed: 100 } );
+      Procedural.animateAlongFeature( 99, { distance: 3000, speed: 800 } );
     },
 
     locationFocus: function(fLat, fLng){
@@ -197,6 +204,10 @@ define([
           // fire event
           app.dispatcher.trigger("Mountain3DView:onFeaturesLoaded");
         };
+
+        Procedural.onFeatureClicked = function ( id ) {
+          console.log( 'Feature clicked:', id );
+        }
       };
 
       // When engine is ready initialize

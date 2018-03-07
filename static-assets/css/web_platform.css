@@ -13,8 +13,8 @@ body {
 }
 
 #map-view {
-  width: 1200px;
-  height: 630px;
+  width: 100%;
+  height: 320px;
 }
 
 #map-view .labelContainer div {
@@ -43,4 +43,12 @@ body {
   border-style: solid;
   border-width: 5px 5px 0 5px;
   border-color: #fff transparent transparent transparent;
+}
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+  #map-view {
+    width: 1200px;
+    height: 630px;
+  }
 }
