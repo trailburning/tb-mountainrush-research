@@ -1,5 +1,7 @@
 var app = app || {};
 
+var GAME_API_URL  = 'http://mountainrush.trailburning.com/tb-game-api/';
+
 define([
   'underscore',
   'backbone',
@@ -18,10 +20,23 @@ define([
 
     app.dispatcher.on("Mountain3DView:onLocationLoaded", onLocationLoaded);
     app.dispatcher.on("Mountain3DView:onFeaturesLoaded", onFeaturesLoaded);
+    app.dispatcher.on("Mountain3DView:onFeatureClicked", onFeatureClicked);
 
+    var mountainModel = null;
+    var mountainEventsCollection = null;
     var mountain3DView = null;
     var arrRouteCoords = null;
     var nCurrPlayer = -1;
+    var nCurrMarker = -1;
+
+    function getJourneyEvents(journeyID) {
+      var url = "https://api.trailburning.com/v2/journeys/" + journeyID + '/events';
+//      console.log(url);
+      $.getJSON(url, function(result){
+        mountainEventsCollection = new Backbone.Collection(result.body.events);
+        setupMap();
+      });
+    }
 
     function getJourney(journeyID) {
       var url = "https://api.trailburning.com/v2/journeys/" + journeyID;
@@ -32,49 +47,98 @@ define([
 
         arrRouteCoords = jsonJourney.route_points;
 
-        setupMap();
+        getJourneyEvents(journeyID);
       });
     }
 
     function setupMap(mountain3DName) {
+      // modify images to use image proxy
+      var strImageHost = GAME_API_URL + 'imageproxy.php?url=';
+
+      var strCaretImage = strImageHost + 'http://mountainrush.trailburning.com/static-assets/images/markers/marker-caret.png';
+
       var arrMapPoint = arrRouteCoords[Math.round(arrRouteCoords.length / 2)].coords;
 
-      mountain3DView = new Mountain3DView({ el: '#map-view', arrMapPoint: arrMapPoint });
+      mountain3DView = new Mountain3DView({ el: '#map-view', arrMapPoint: arrMapPoint, geography: 2, caretImage: strCaretImage });
       mountain3DView.show();
       mountain3DView.render();
     }
 
     function setupMapPoint(arrMapPoint) {
-      mountain3DView = new Mountain3DView({ el: '#map-view', arrMapPoint: arrMapPoint });
+      mountain3DView = new Mountain3DView({ el: '#map-view', arrMapPoint: arrMapPoint, geography: 2, caretImage: strCaretImage });
       mountain3DView.show();
       mountain3DView.render();
     }
 
     function onLocationLoaded() {
+      // modify avatar to use image proxy
+      var strAvatarHost = GAME_API_URL + 'imageproxy.php?url=';
+
       if (arrRouteCoords) {
-        mountain3DView.addRouteData(arrRouteCoords);
+        var jsonPlayers = new Array;
 
-        mountain3DView.addFlag("http://mountainrush.trailburning.com/demo/tb-mountainrush-research/static-assets/images/mr_logo.png");
+        var objPlayer1 = new Object();
+        objPlayer1.id = 'player1';
+        objPlayer1.step = 3;
+        objPlayer1.progress = 3;
+        objPlayer1.imagePath = strAvatarHost + 'https://dgalywyr863hv.cloudfront.net/pictures/athletes/270394/7302003/9/large.jpg';
+        jsonPlayers.push(objPlayer1);
 
-        mountain3DView.addPlayer(0, 3000, "http://forum.jedox.com/wcf/images/avatars/d1/14-d1d779416bac6c1973e66fa698d040efc412ea3a.png", 60);
-        mountain3DView.addPlayer(1, 8000, "https://dgalywyr863hv.cloudfront.net/pictures/athletes/270394/7302003/9/large.jpg", 60);
+        var objPlayer2 = new Object();
+        objPlayer2.id = 'player2';
+        objPlayer2.step = 2;
+        objPlayer2.progress = 4.5;
+        objPlayer2.imagePath = strAvatarHost + 'https://dgalywyr863hv.cloudfront.net/pictures/athletes/2546781/7075915/1/large.jpg';
+        jsonPlayers.push(objPlayer2);
+
+        mountain3DView.addRouteData(arrRouteCoords, objPlayer1.progress);
+
+        mountain3DView.addFlag(strAvatarHost + "http://mountainrush.trailburning.com/static-assets/images/markers/marker-location-orange.png");
+
+        var strImage = '';
+        mountainEventsCollection.each(function(event, index) {
+          switch (index) {
+            case 0:
+              strImage = strAvatarHost + 'http://mountainrush.trailburning.com/static-assets/images/wwfuk-climb/stories/gorilla.jpg'
+              break;
+
+            default:
+              strImage = strAvatarHost + 'http://mountainrush.trailburning.com/static-assets/images/wwfuk-climb/stories/baby.jpg'
+              break;
+          }
+          mountain3DView.addMarker('marker' + index, event.get('coords'), strImage, strAvatarHost + 'http://mountainrush.trailburning.com/static-assets/images/markers/marker-event-unlocked.png', strAvatarHost + 'http://mountainrush.trailburning.com/static-assets/images/markers/marker-event-locked.png');
+        });
+
+        var playerCollection = new Backbone.Collection(jsonPlayers);
+        mountain3DView.addPlayers(playerCollection);
       }
     }
 
     function onFeaturesLoaded() {
-      var arrCoord = arrRouteCoords[arrRouteCoords.length - 1];
-/*
-      mountain3DView.locationFocus(arrCoord.coords[1], arrCoord.coords[0]);
-      setTimeout(function(){ 
-        mountain3DView.attractor();
-      }, 4000);
-*/      
+      mountain3DView.showMarkers();
+      mountain3DView.selectPlayer('player1');
+      nCurrPlayer = 0;
+    }
+
+    function onFeatureClicked(id) {
+      switch (id) {
+        case FLAG_ID:
+          mountain3DView.playRoute();
+          break;
+
+        default:
+          mountain3DView.selectFeature(id);
+          break;
+      }
     }
 
 //    setupMapPoint([6.894093, 45.877274]); // Mont Blanc
+//    setupMapPoint([29.6, -1.4]); // Mount Sabyinyo
+
+    getJourney('5aab77247169c568617867'); // Mount Sabyinyo
 
 //    getJourney('5a44843c9d4a5373279579'); // Mont Blanc
-    getJourney('5875843c37d99829635908'); // Mitterhorn 2056m Run
+//    getJourney('5875843c37d99829635908'); // Mitterhorn 2056m Run
 //    getJourney('59a180c711b0c944854494'); // Großglockner 2651m Run
 //    getJourney('59d4ad31a276a319404809'); // Monte Pelmo 2947m Run
 
@@ -90,26 +154,57 @@ define([
       mountain3DView.addSnow();
     });
 
-    $('.removeplayers').click(function(evt){
-      mountain3DView.removePlayer(0);
-      mountain3DView.removePlayer(1);
+    $('.summit').click(function(evt){
+      mountain3DView.selectFlag();
     });
 
-    $('.toggleplayer').click(function(evt){
+    $('.cycleplayer').click(function(evt){
       switch (nCurrPlayer) {
         case -1:
-          mountain3DView.selectPlayer(0);
+          mountain3DView.showMarkers();
+          mountain3DView.selectPlayer('player1');
           nCurrPlayer = 0;
           break;
 
         case 0:
-          mountain3DView.selectPlayer(1);
+          mountain3DView.hideMarkers();
+          mountain3DView.selectPlayer('player2');
           nCurrPlayer = 1;
           break;
 
         case 1:
-          mountain3DView.selectPlayer(0);
+          mountain3DView.showMarkers();
+          mountain3DView.selectPlayer('player1');
           nCurrPlayer = 0;
+          break;
+      }
+    });
+
+    $('.cyclemarker').click(function(evt){
+      switch (nCurrMarker) {
+        case -1:
+          mountain3DView.selectMarker(0);
+          nCurrMarker = 0;
+          break;
+
+        case 0:
+          mountain3DView.selectMarker(1);
+          nCurrMarker = 1;
+          break;
+
+        case 1:
+          mountain3DView.selectMarker(2);
+          nCurrMarker = 2;
+          break;
+
+        case 2:
+          mountain3DView.selectMarker(3);
+          nCurrMarker = 3;
+          break;
+
+        case 3:
+          mountain3DView.selectMarker(0);
+          nCurrMarker = 0;
           break;
       }
     });

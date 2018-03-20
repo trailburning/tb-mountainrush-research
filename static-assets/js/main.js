@@ -5,7 +5,7 @@ require.config({
     Modernizr: 'libs/modernizr-custom',
     underscore: 'libs/underscore-min',
     backbone: 'libs/backbone-min',
-    turf: 'http://api.tiles.mapbox.com/mapbox.js/plugins/turf/v1.4.0/turf.min',
+    turf: 'https://npmcdn.com/@turf/turf/turf.min',
 //    piste: 'https://www.procedural.eu/js-sdk/scripts/procedural.demo'
     piste: 'https://planet.procedural.eu/procedural-js/latest/procedural'
   },
