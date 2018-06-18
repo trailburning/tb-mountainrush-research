@@ -65,7 +65,7 @@ define([
     }
 
     function setupMapPoint(arrMapPoint) {
-      mountain3DView = new Mountain3DView({ el: '#map-view', arrMapPoint: arrMapPoint, geography: 2, caretImage: strCaretImage });
+      mountain3DView = new Mountain3DView({ el: '#map-view', arrMapPoint: arrMapPoint, geography: 2 });
       mountain3DView.show();
       mountain3DView.render();
     }
@@ -80,20 +80,20 @@ define([
         var objPlayer1 = new Object();
         objPlayer1.id = 'player1';
         objPlayer1.step = 3;
-        objPlayer1.progress = 3;
+        objPlayer1.progress = 0;
         objPlayer1.imagePath = strAvatarHost + 'https://dgalywyr863hv.cloudfront.net/pictures/athletes/270394/7302003/9/large.jpg';
         jsonPlayers.push(objPlayer1);
 
         var objPlayer2 = new Object();
         objPlayer2.id = 'player2';
         objPlayer2.step = 2;
-        objPlayer2.progress = 4.5;
+        objPlayer2.progress = 3;
         objPlayer2.imagePath = strAvatarHost + 'https://dgalywyr863hv.cloudfront.net/pictures/athletes/2546781/7075915/1/large.jpg';
         jsonPlayers.push(objPlayer2);
 
-        mountain3DView.addRouteData(arrRouteCoords, objPlayer1.progress);
-
-        mountain3DView.addFlag(strAvatarHost + "http://mountainrush.trailburning.com/static-assets/images/markers/marker-location-orange.png");
+        mountain3DView.addRouteData(arrRouteCoords);
+        mountain3DView.addFlag(strAvatarHost + "http://mountainrush.trailburning.com/static-assets/images/markers/marker-location.png");
+        mountain3DView.showBaseData();
 
         var strImage = '';
         mountainEventsCollection.each(function(event, index) {
@@ -134,13 +134,15 @@ define([
 
 //    setupMapPoint([6.894093, 45.877274]); // Mont Blanc
 //    setupMapPoint([29.6, -1.4]); // Mount Sabyinyo
+//    setupMapPoint([7.749117, 46.020713]); // Zermatt
+//    setupMapPoint([10.985365, 47.421066]); // Zugspitze
 
     getJourney('5aab77247169c568617867'); // Mount Sabyinyo
-
 //    getJourney('5a44843c9d4a5373279579'); // Mont Blanc
 //    getJourney('5875843c37d99829635908'); // Mitterhorn 2056m Run
 //    getJourney('59a180c711b0c944854494'); // Großglockner 2651m Run
 //    getJourney('59d4ad31a276a319404809'); // Monte Pelmo 2947m Run
+//    getJourney('5aeaf2b4cfa39386959545'); // Zugspitze
 
     $('.fly').click(function(evt){
       mountain3DView.playRoute();

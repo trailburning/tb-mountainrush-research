@@ -6,8 +6,8 @@ require.config({
     underscore: 'libs/underscore-min',
     backbone: 'libs/backbone-min',
     turf: 'https://npmcdn.com/@turf/turf/turf.min',
-//    piste: 'https://www.procedural.eu/js-sdk/scripts/procedural.demo'
-    piste: 'https://planet.procedural.eu/procedural-js/latest/procedural'
+//    piste: 'https://planet.procedural.eu/procedural-js/latest/procedural'
+    piste: 'https://planet.procedural.eu/procedural-js/0.2.2/procedural'
   },
   shim: {
   }
