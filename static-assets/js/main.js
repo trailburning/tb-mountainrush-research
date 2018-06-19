@@ -7,7 +7,8 @@ require.config({
     backbone: 'libs/backbone-min',
     turf: 'https://npmcdn.com/@turf/turf/turf.min',
 //    piste: 'https://planet.procedural.eu/procedural-js/latest/procedural'
-    piste: 'https://planet.procedural.eu/procedural-js/0.2.2/procedural'
+//    piste: 'https://planet.procedural.eu/procedural-js/0.2.2/procedural'
+    piste: 'https://planet.procedural.eu/procedural-js/0.3.1/procedural'
   },
   shim: {
   }

@@ -22,6 +22,7 @@ define([
     app.dispatcher.on("Mountain3DView:onFeaturesLoaded", onFeaturesLoaded);
     app.dispatcher.on("Mountain3DView:onFeatureClicked", onFeatureClicked);
 
+    var jsonPlayers = new Array;
     var mountainModel = null;
     var mountainEventsCollection = null;
     var mountain3DView = null;
@@ -55,11 +56,9 @@ define([
       // modify images to use image proxy
       var strImageHost = GAME_API_URL + 'imageproxy.php?url=';
 
-      var strCaretImage = strImageHost + 'http://mountainrush.trailburning.com/static-assets/images/markers/marker-caret.png';
-
       var arrMapPoint = arrRouteCoords[Math.round(arrRouteCoords.length / 2)].coords;
 
-      mountain3DView = new Mountain3DView({ el: '#map-view', arrMapPoint: arrMapPoint, geography: 2, caretImage: strCaretImage });
+      mountain3DView = new Mountain3DView({ el: '#map-view', arrMapPoint: arrMapPoint, geography: 2 });
       mountain3DView.show();
       mountain3DView.render();
     }
@@ -70,17 +69,44 @@ define([
       mountain3DView.render();
     }
 
+    function addMapMarkers() {
+      // modify images to use image proxy
+      var strImageHost = GAME_API_URL + 'imageproxy.php?url=';
+      var fProgressKM = jsonPlayers[0].progress;
+      var bEnabled = false;
+      var latestEnabledMarkerID = 0;
+
+      mountainEventsCollection.each(function(event, index) {
+        var strImage = '';
+
+        // select 1st image asset
+        $.each(event.get('assets')[0].media, function(index, media){
+          if (media.mime_type == 'image/jpeg') {
+            strImage = media.path + '?fm=jpg&w=64&h=64&fit=crop&q=80';
+          }
+        });
+        strImage = strImageHost + strImage;
+
+        bEnabled = mountain3DView.addMarker(event.get('id'), event.get('coords'), fProgressKM, 0.04, strImage, strImageHost + 'http://mountainrush.trailburning.com/static-assets/images/markers/marker-event-unlocked.png', strImageHost + 'http://mountainrush.trailburning.com/static-assets/images/markers/marker-event-locked.png');
+
+        if (bEnabled) {
+          latestEnabledMarkerID = event.get('id');
+        }
+      });
+
+      return latestEnabledMarkerID;
+    }
+
     function onLocationLoaded() {
       // modify avatar to use image proxy
       var strAvatarHost = GAME_API_URL + 'imageproxy.php?url=';
 
       if (arrRouteCoords) {
-        var jsonPlayers = new Array;
-
         var objPlayer1 = new Object();
         objPlayer1.id = 'player1';
         objPlayer1.step = 3;
-        objPlayer1.progress = 0;
+        objPlayer1.progress = 4;
+        objPlayer1.elevationGainPercent = 0;
         objPlayer1.imagePath = strAvatarHost + 'https://dgalywyr863hv.cloudfront.net/pictures/athletes/270394/7302003/9/large.jpg';
         jsonPlayers.push(objPlayer1);
 
@@ -88,6 +114,7 @@ define([
         objPlayer2.id = 'player2';
         objPlayer2.step = 2;
         objPlayer2.progress = 3;
+        objPlayer2.elevationGainPercent = 0;
         objPlayer2.imagePath = strAvatarHost + 'https://dgalywyr863hv.cloudfront.net/pictures/athletes/2546781/7075915/1/large.jpg';
         jsonPlayers.push(objPlayer2);
 
@@ -95,6 +122,8 @@ define([
         mountain3DView.addFlag(strAvatarHost + "http://mountainrush.trailburning.com/static-assets/images/markers/marker-location.png");
         mountain3DView.showBaseData();
 
+        addMapMarkers();
+/*
         var strImage = '';
         mountainEventsCollection.each(function(event, index) {
           switch (index) {
@@ -108,7 +137,7 @@ define([
           }
           mountain3DView.addMarker('marker' + index, event.get('coords'), strImage, strAvatarHost + 'http://mountainrush.trailburning.com/static-assets/images/markers/marker-event-unlocked.png', strAvatarHost + 'http://mountainrush.trailburning.com/static-assets/images/markers/marker-event-locked.png');
         });
-
+*/
         var playerCollection = new Backbone.Collection(jsonPlayers);
         mountain3DView.addPlayers(playerCollection);
       }
