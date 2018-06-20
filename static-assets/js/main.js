@@ -8,7 +8,7 @@ require.config({
     turf: 'https://npmcdn.com/@turf/turf/turf.min',
 //    piste: 'https://planet.procedural.eu/procedural-js/latest/procedural'
 //    piste: 'https://planet.procedural.eu/procedural-js/0.2.2/procedural'
-    piste: 'https://planet.procedural.eu/procedural-js/0.3.1/procedural'
+    piste: 'https://planet.procedural.eu/procedural-js/0.3.2/procedural'
   },
   shim: {
   }

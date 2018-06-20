@@ -531,8 +531,8 @@ define([
               "snowBottom" : 4999,
               "rockTop": 5000,
               "rockBottom": 4999,
-              "treeColor": "#52a101",
-              "grassColor": "#87c700"
+              "treeColor": "#49850a",
+              "grassColor": "#5f6d2a"
             }
           } );
           break;
